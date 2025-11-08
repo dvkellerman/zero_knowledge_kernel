@@ -84,7 +84,7 @@ iso: $(KERNEL_BIN) grub.cfg
 # -serial stdio: Redirect serial port (COM1) to stdout
 # -monitor stdio: Enable QEMU monitor (press Ctrl+A then C to access)
 run: iso
-	$(QEMU) -cdrom kernel.iso -serial stdio
+	$(QEMU) -cdrom kernel.iso -serial stdio -d int -no-reboot
 
 # Run kernel in QEMU with serial output to file
 # -serial file:serial.log: Redirect serial port to file
