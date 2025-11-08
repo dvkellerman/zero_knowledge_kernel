@@ -49,11 +49,11 @@ This document tracks our progress and plans for building the x86 kernel.
 ## 🚧 Next Steps
 
 ### Phase 4: Interrupt Handling (Next Priority)
-- [ ] **Interrupt Descriptor Table (IDT)** - Set up IDT for handling interrupts
-  - [ ] Create IDT structure
-  - [ ] Load IDT with `lidt` instruction
-  - [ ] Implement interrupt handlers
-  - [ ] Handle exceptions (divide by zero, page fault, etc.)
+- [X] **Interrupt Descriptor Table (IDT)** - Set up IDT for handling interrupts
+  - [X] Create IDT structure
+  - [X] Load IDT with `lidt` instruction
+  - [X] Implement interrupt handlers
+  - [X] Handle exceptions (divide by zero, page fault, etc.)
   
 - [ ] **Programmable Interrupt Controller (PIC)** - Remap and configure PIC
   - [ ] Remap IRQ 0-15 to interrupt vectors 32-47

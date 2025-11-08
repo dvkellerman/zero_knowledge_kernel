@@ -76,10 +76,12 @@ static void debug_log_internal(unsigned int level, const char* prefix, const cha
     serial_puts(message);
     serial_puts("\n");
     
-    /* Output to VGA (if level is WARN or higher) */
-    if (level >= LOG_WARN) {
+    /* Output to VGA (if level is INFO or higher) */
+    if (level >= LOG_INFO) {
         unsigned char color;
-        if (level == LOG_WARN) {
+        if (level == LOG_INFO) {
+            color = VGA_COLOR(COLOR_LIGHT_GREY, COLOR_BLACK);
+        } else if (level == LOG_WARN) {
             color = VGA_COLOR(COLOR_YELLOW, COLOR_BLACK);
         } else if (level == LOG_ERROR) {
             color = VGA_COLOR(COLOR_LIGHT_RED, COLOR_BLACK);
