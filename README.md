@@ -55,10 +55,10 @@ This document tracks our progress and plans for building the x86 kernel.
   - [X] Implement interrupt handlers
   - [X] Handle exceptions (divide by zero, page fault, etc.)
   
-- [ ] **Programmable Interrupt Controller (PIC)** - Remap and configure PIC
-  - [ ] Remap IRQ 0-15 to interrupt vectors 32-47
-  - [ ] Enable/disable specific interrupts
-  - [ ] Handle IRQ interrupts
+- [X] **Programmable Interrupt Controller (PIC)** - Remap and configure PIC
+  - [X] Remap IRQ 0-15 to interrupt vectors 32-47
+  - [X] Enable/disable specific interrupts
+  - [X] Handle IRQ interrupts
   
 - [ ] **Timer Interrupt** - Set up timer for scheduling
   - [ ] Configure PIT (Programmable Interval Timer)
