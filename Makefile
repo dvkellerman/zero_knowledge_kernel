@@ -33,8 +33,8 @@ BOOT_DIR = $(ISO_DIR)/boot
 GRUB_DIR = $(BOOT_DIR)/grub
 
 # Source files
-KERNEL_SRC = boostrap.c vga.c serial.c debug.c idt.c idt_asm.c pic.c
-KERNEL_OBJ = $(BUILD_DIR)/boostrap.o $(BUILD_DIR)/vga.o $(BUILD_DIR)/serial.o $(BUILD_DIR)/debug.o $(BUILD_DIR)/idt.o $(BUILD_DIR)/idt_asm.o $(BUILD_DIR)/pic.o
+KERNEL_SRC = boostrap.c vga.c serial.c debug.c idt.c idt_asm.c pic.c timer.c
+KERNEL_OBJ = $(BUILD_DIR)/boostrap.o $(BUILD_DIR)/vga.o $(BUILD_DIR)/serial.o $(BUILD_DIR)/debug.o $(BUILD_DIR)/idt.o $(BUILD_DIR)/idt_asm.o $(BUILD_DIR)/pic.o $(BUILD_DIR)/timer.o
 KERNEL_BIN = $(BUILD_DIR)/kernel.bin
 
 # Default target
@@ -45,7 +45,7 @@ $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)
 
 # Compile kernel source files to object files
-$(BUILD_DIR)/boostrap.o: boostrap.c debug.h idt.h pic.h | $(BUILD_DIR)
+$(BUILD_DIR)/boostrap.o: boostrap.c debug.h idt.h pic.h timer.h | $(BUILD_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 $(BUILD_DIR)/vga.o: vga.c vga.h | $(BUILD_DIR)
@@ -57,13 +57,16 @@ $(BUILD_DIR)/serial.o: serial.c serial.h | $(BUILD_DIR)
 $(BUILD_DIR)/debug.o: debug.c debug.h vga.h serial.h | $(BUILD_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(BUILD_DIR)/idt.o: idt.c idt.h debug.h pic.h | $(BUILD_DIR)
+$(BUILD_DIR)/idt.o: idt.c idt.h debug.h pic.h timer.h | $(BUILD_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 $(BUILD_DIR)/idt_asm.o: idt_asm.c idt.h | $(BUILD_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 $(BUILD_DIR)/pic.o: pic.c pic.h | $(BUILD_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(BUILD_DIR)/timer.o: timer.c timer.h pic.h | $(BUILD_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 # Link object file to create kernel binary

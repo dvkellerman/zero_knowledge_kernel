@@ -60,10 +60,10 @@ This document tracks our progress and plans for building the x86 kernel.
   - [X] Enable/disable specific interrupts
   - [X] Handle IRQ interrupts
   
-- [ ] **Timer Interrupt** - Set up timer for scheduling
-  - [ ] Configure PIT (Programmable Interval Timer)
-  - [ ] Implement timer interrupt handler
-  - [ ] Basic time tracking
+- [X] **Timer Interrupt** - Set up timer for scheduling
+  - [X] Configure PIT (Programmable Interval Timer)
+  - [X] Implement timer interrupt handler
+  - [X] Basic time tracking
 
 ### Phase 5: Keyboard Input
 - [ ] **Keyboard Driver** - PS/2 keyboard support

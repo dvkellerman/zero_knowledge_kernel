@@ -10,6 +10,7 @@
 #include "debug.h"
 #include "idt.h"
 #include "pic.h"
+#include "timer.h"
 
 /* Multiboot Specification Constants */
 #define MULTIBOOT_HEADER_MAGIC      0x1BADB002
@@ -138,6 +139,14 @@ void kernel_main(unsigned int magic, struct multiboot_info* mbi) {
     pic_init();
     debug_info("PIC initialized");
     
+    /* Initialize Timer (PIT) */
+    timer_init();
+    debug_info("Timer initialized");
+    
+    /* Enable interrupts (sti instruction) */
+    __asm__ volatile ("sti");
+    debug_info("Interrupts enabled");
+    
     /* Verify we were loaded by a Multiboot-compliant bootloader */
     if (magic != MULTIBOOT_BOOTLOADER_MAGIC) {
         panic("Invalid bootloader magic number!");
@@ -185,21 +194,30 @@ void kernel_main(unsigned int magic, struct multiboot_info* mbi) {
     debug_warn("This is a warning message");
     debug_error("This is an error message (test)");
     
-    /* Test IDT - trigger a divide by zero exception */
-    debug_info("Testing IDT with divide by zero exception...");
-    debug_puts("About to divide by zero...\n");
+    /* Test timer - show ticks every second */
+    debug_info("Timer test: showing ticks every second...\n");
+    debug_puts("Timer is running. You should see timer ticks.\n\n");
     
-    // /* This will trigger exception 0 (Division By Zero) */
-    volatile int a = 1;
-    volatile int b = 0;
-    volatile int c = a / b;  /* This should trigger our exception handler */
-    
-    // /* We should never reach here if exception handling works */
-    debug_puts("ERROR: Should not reach here!\n");
+    unsigned int last_ticks = 0;
+    unsigned int last_seconds = 0;
     
     /* Infinite loop - kernel is running */
     while (1) {
-        /* For now, we just halt the CPU */
+        unsigned int current_ticks = timer_get_ticks();
+        unsigned int current_seconds = timer_get_ms() / 1000;
+        
+        /* Print ticks every second */
+        if (current_seconds != last_seconds) {
+            debug_set_color(VGA_COLOR(COLOR_LIGHT_CYAN, COLOR_BLACK));
+            debug_puts("Timer: ");
+            debug_putuint(current_ticks);
+            debug_puts(" ticks (");
+            debug_putuint(current_seconds);
+            debug_puts(" seconds)\n");
+            last_seconds = current_seconds;
+        }
+        
+        /* Halt CPU - interrupts will wake it up */
         __asm__ volatile ("hlt");
     }
 }

@@ -7,6 +7,7 @@
 #include "idt.h"
 #include "debug.h"
 #include "pic.h"
+#include "timer.h"
 
 /* Forward declaration for halt() */
 extern void halt(void);
@@ -120,10 +121,16 @@ void irq_handler(unsigned int interrupt_num) {
     /* Convert interrupt vector to IRQ number */
     unsigned char irq = interrupt_num - PIC_IRQ_BASE;
     
-    /* For now, just print the IRQ */
-    debug_info("IRQ received: ");
-    debug_putuint(irq);
-    debug_puts("\n");
+    /* Handle specific IRQs */
+    if (irq == 0) {
+        /* Timer interrupt (IRQ 0) */
+        timer_interrupt_handler();
+    } else {
+        /* Other IRQs - for now, just print */
+        debug_info("IRQ received: ");
+        debug_putuint(irq);
+        debug_puts("\n");
+    }
     
     /* Send End of Interrupt to PIC */
     pic_send_eoi(irq);
