@@ -8,6 +8,7 @@
  */
 
 #include "debug.h"
+#include "idt.h"
 
 /* Multiboot Specification Constants */
 #define MULTIBOOT_HEADER_MAGIC      0x1BADB002
@@ -129,6 +130,9 @@ void kernel_main(unsigned int magic, struct multiboot_info* mbi) {
     debug_init();
     debug_info("Debug system initialized");
     
+    /* Initialize Interrupt Descriptor Table */
+    idt_init();
+    
     /* Verify we were loaded by a Multiboot-compliant bootloader */
     if (magic != MULTIBOOT_BOOTLOADER_MAGIC) {
         panic("Invalid bootloader magic number!");
@@ -167,17 +171,26 @@ void kernel_main(unsigned int magic, struct multiboot_info* mbi) {
     }
     
     debug_set_color(VGA_COLOR(COLOR_WHITE, COLOR_BLACK));
-    debug_puts("\nKernel initialized successfully!\n");
-    debug_puts("System ready.\n");
-    
-    debug_info("Kernel initialized successfully");
-    debug_info("System ready");
+    debug_info("Kernel initialized successfully!\n");
+    debug_info("System ready.\n");
     
     /* Test debug logging */
     debug_debug("This is a debug message");
     debug_info("This is an info message");
     debug_warn("This is a warning message");
     debug_error("This is an error message (test)");
+    
+    /* Test IDT - trigger a divide by zero exception */
+    debug_info("Testing IDT with divide by zero exception...");
+    debug_puts("About to divide by zero...\n");
+    
+    // /* This will trigger exception 0 (Division By Zero) */
+    volatile int a = 1;
+    volatile int b = 0;
+    volatile int c = a / b;  /* This should trigger our exception handler */
+    
+    // /* We should never reach here if exception handling works */
+    debug_puts("ERROR: Should not reach here!\n");
     
     /* Infinite loop - kernel is running */
     while (1) {

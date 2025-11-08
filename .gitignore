@@ -57,3 +57,4 @@ build/kernel.bin
 .vscode/settings.json
 iso/boot/kernel.bin
 kernel.iso
+serial.log
