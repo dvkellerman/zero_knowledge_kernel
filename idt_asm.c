@@ -7,8 +7,9 @@
 
 #include "idt.h"
 
-/* Forward declaration */
+/* Forward declarations */
 void exception_handler(unsigned int interrupt_num);
+void irq_handler(unsigned int interrupt_num);
 
 /* 
  * Interrupt Handler Stub Macro
@@ -57,4 +58,36 @@ ISR_STUB(16)
 ISR_STUB(17)
 ISR_STUB(18)
 ISR_STUB(19)
+
+/* IRQ Handler Stub Macro - calls irq_handler instead of exception_handler */
+#define IRQ_STUB(num) \
+void isr##num(void) { \
+    __asm__ volatile ( \
+        "pusha\n"              /* Save all general-purpose registers */ \
+        "pushl $" #num "\n"    /* Push interrupt number */ \
+        "call irq_handler\n"   /* Call IRQ handler (sends EOI) */ \
+        "addl $4, %%esp\n"     /* Remove interrupt number from stack */ \
+        "popa\n"               /* Restore all general-purpose registers */ \
+        "iret\n"               /* Return from interrupt (restores EFLAGS, CS, EIP) */ \
+        ::: "memory" \
+    ); \
+}
+
+/* Create interrupt stubs for IRQs 32-47 */
+IRQ_STUB(32)
+IRQ_STUB(33)
+IRQ_STUB(34)
+IRQ_STUB(35)
+IRQ_STUB(36)
+IRQ_STUB(37)
+IRQ_STUB(38)
+IRQ_STUB(39)
+IRQ_STUB(40)
+IRQ_STUB(41)
+IRQ_STUB(42)
+IRQ_STUB(43)
+IRQ_STUB(44)
+IRQ_STUB(45)
+IRQ_STUB(46)
+IRQ_STUB(47)
 
