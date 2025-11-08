@@ -6,6 +6,7 @@
 
 #include "idt.h"
 #include "debug.h"
+#include "pic.h"
 
 /* Forward declaration for halt() */
 extern void halt(void);
@@ -75,6 +76,24 @@ extern void isr18(void);  /* Machine check */
 extern void isr19(void);  /* SIMD floating point exception */
 /* We'll add more as needed */
 
+/* IRQ handlers (32-47) */
+extern void isr32(void);  /* IRQ 0 - Timer */
+extern void isr33(void);  /* IRQ 1 - Keyboard */
+extern void isr34(void);  /* IRQ 2 - Cascade */
+extern void isr35(void);  /* IRQ 3 - COM2 */
+extern void isr36(void);  /* IRQ 4 - COM1 */
+extern void isr37(void);  /* IRQ 5 - LPT2 */
+extern void isr38(void);  /* IRQ 6 - Floppy */
+extern void isr39(void);  /* IRQ 7 - LPT1 */
+extern void isr40(void);  /* IRQ 8 - RTC */
+extern void isr41(void);  /* IRQ 9 - Free */
+extern void isr42(void);  /* IRQ 10 - Free */
+extern void isr43(void);  /* IRQ 11 - Free */
+extern void isr44(void);  /* IRQ 12 - PS/2 Mouse */
+extern void isr45(void);  /* IRQ 13 - FPU */
+extern void isr46(void);  /* IRQ 14 - Primary ATA */
+extern void isr47(void);  /* IRQ 15 - Secondary ATA */
+
 /* Generic exception handler (called from assembly stubs) */
 void exception_handler(unsigned int interrupt_num) {
     debug_error("Exception occurred!");
@@ -94,6 +113,22 @@ void exception_handler(unsigned int interrupt_num) {
     /* For now, we'll halt on exceptions */
     /* Later we can add proper error recovery */
     halt();
+}
+
+/* IRQ handler (called from assembly stubs for IRQs 32-47) */
+void irq_handler(unsigned int interrupt_num) {
+    /* Convert interrupt vector to IRQ number */
+    unsigned char irq = interrupt_num - PIC_IRQ_BASE;
+    
+    /* For now, just print the IRQ */
+    debug_info("IRQ received: ");
+    debug_putuint(irq);
+    debug_puts("\n");
+    
+    /* Send End of Interrupt to PIC */
+    pic_send_eoi(irq);
+    
+    /* Note: We return from interrupt here (handled by assembly stub) */
 }
 
 /* Set an IDT entry */
@@ -140,6 +175,24 @@ void idt_init(void) {
     idt_set_entry(17, (unsigned int)isr17, 0x08, 0x8E);
     idt_set_entry(18, (unsigned int)isr18, 0x08, 0x8E);
     idt_set_entry(19, (unsigned int)isr19, 0x08, 0x8E);
+    
+    /* Set up IRQ handlers (32-47) */
+    idt_set_entry(32, (unsigned int)isr32, 0x08, 0x8E);  /* IRQ 0 - Timer */
+    idt_set_entry(33, (unsigned int)isr33, 0x08, 0x8E);  /* IRQ 1 - Keyboard */
+    idt_set_entry(34, (unsigned int)isr34, 0x08, 0x8E);  /* IRQ 2 - Cascade */
+    idt_set_entry(35, (unsigned int)isr35, 0x08, 0x8E);  /* IRQ 3 - COM2 */
+    idt_set_entry(36, (unsigned int)isr36, 0x08, 0x8E);  /* IRQ 4 - COM1 */
+    idt_set_entry(37, (unsigned int)isr37, 0x08, 0x8E);  /* IRQ 5 - LPT2 */
+    idt_set_entry(38, (unsigned int)isr38, 0x08, 0x8E);  /* IRQ 6 - Floppy */
+    idt_set_entry(39, (unsigned int)isr39, 0x08, 0x8E);  /* IRQ 7 - LPT1 */
+    idt_set_entry(40, (unsigned int)isr40, 0x08, 0x8E);  /* IRQ 8 - RTC */
+    idt_set_entry(41, (unsigned int)isr41, 0x08, 0x8E);  /* IRQ 9 - Free */
+    idt_set_entry(42, (unsigned int)isr42, 0x08, 0x8E);  /* IRQ 10 - Free */
+    idt_set_entry(43, (unsigned int)isr43, 0x08, 0x8E);  /* IRQ 11 - Free */
+    idt_set_entry(44, (unsigned int)isr44, 0x08, 0x8E);  /* IRQ 12 - PS/2 Mouse */
+    idt_set_entry(45, (unsigned int)isr45, 0x08, 0x8E);  /* IRQ 13 - FPU */
+    idt_set_entry(46, (unsigned int)isr46, 0x08, 0x8E);  /* IRQ 14 - Primary ATA */
+    idt_set_entry(47, (unsigned int)isr47, 0x08, 0x8E);  /* IRQ 15 - Secondary ATA */
     
     /* Load IDT */
     __asm__ volatile ("lidt %0" : : "m"(idt_reg));

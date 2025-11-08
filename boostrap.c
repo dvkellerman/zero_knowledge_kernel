@@ -9,6 +9,7 @@
 
 #include "debug.h"
 #include "idt.h"
+#include "pic.h"
 
 /* Multiboot Specification Constants */
 #define MULTIBOOT_HEADER_MAGIC      0x1BADB002
@@ -132,6 +133,10 @@ void kernel_main(unsigned int magic, struct multiboot_info* mbi) {
     
     /* Initialize Interrupt Descriptor Table */
     idt_init();
+    
+    /* Initialize Programmable Interrupt Controller */
+    pic_init();
+    debug_info("PIC initialized");
     
     /* Verify we were loaded by a Multiboot-compliant bootloader */
     if (magic != MULTIBOOT_BOOTLOADER_MAGIC) {
