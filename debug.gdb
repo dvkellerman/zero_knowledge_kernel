@@ -42,3 +42,5 @@ echo   info registers     - Show CPU registers\n
 echo   x/10i $pc          - Disassemble at PC\n
 echo \n
 
+b idt.c:205
+c
